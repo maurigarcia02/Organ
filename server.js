@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const fs = require('fs');
+const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
@@ -11,6 +12,15 @@ app.use(cors()); // Allow requests from the frontend
 app.use(express.json()); // Parse JSON request bodies
 
 const EVENTS_FILE = './events.json';
+
+// Serve static files from the dist folder
+app.use(express.static(path.join(__dirname, 'dist')));
+
+// Fallback for React Router
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+});
+
 
 
 // Endpoint to get events
@@ -36,7 +46,6 @@ app.post('/events', (req, res) => {
   });
 });
 
-// Start the server
 app.listen(PORT, () => {
-  console.log(`Backend server running at http://localhost:${PORT}`);
-});
+    console.log(`Server running on port ${PORT}`);
+  });
